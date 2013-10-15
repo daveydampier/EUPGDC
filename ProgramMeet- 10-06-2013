@@ -1,0 +1,116 @@
+*Things For Code
+
+Player Mechanics
+•	Movement (First Person)
+  o	Walk, Run, Crouch, Dive/Roll, Jump, Climb
+•	Attack/Swing
+•	Interact
+•	Throw
+•	Access Map
+•	Remove Bolt
+Player Status
+•	Helath
+  o	Damage, Movement Speed
+•	Inventory
+  o	Permanent: Wrench, Map
+  o	Variable: Bolts, Uniforms
+Traps
+•	Triggers
+•	Damage
+•	Timer
+Game Engine
+•	Pausing/Unpausing
+•	Save Game / AutoSave
+  o	Write/Read File
+•	Scene Traversal
+•	Menu/Pause
+  o	Settings
+  o	Load/Continue
+•	AI – Enemy
+  o	Pathfinding
+  o	Attack
+  o	Detection
+  o	Alarms
+•	AI – Ally
+  o	Dialogue
+  o	Pathifinding/Attack (Boss Encounter)
+
+ 
+*******************************************************************************************************
+*Organization Notes (Jeremy Felege)
+
+**This is just a general idea of what I've seen in the past.. breaking "classes" into manager groups, with callback references between them makes organization easier.. especially when mapping the API's/interfaces seems to help.. I didn't spend a lot of time on the diagram, just did it so convey basic concept.. sorry. :)
+
+Sometimes our teams would do "MonoBehaviors", or sometimes link them to a static class of GameManager+Struct, where they could poll info from.. A lot depends on implementation..
+
+**Something else, if we start using a lot of Enums (publicly) my old team got into the habit of having a c# file named "PubEnums" that we dumped any public/static enums for easier lookup (depends on IDE / code design tho .. but just an idea) - we had like 100's of scripts too though.. 
+
+Back to managers topic:
+(Example: game goes to pause.. a class should handle unlocking/showing mouse, showing inGame menu, setting time= 0,etc.. )
+
+
+*GameManager :: NULL_GOBJ (DND)
+Or *SessionManager
+   -handles overwatching the state of the game
+   -level loads, scene states (menus/no menus/splash screens,etc)
+   -pause state (class ref)
+   -save state (class ref)
+
+
+*GUIManager
+   -handles anything dealing with GUIs~
+   -references MenuManager
+   -references HUDManager/script
+
+*MenuManager (3 states: Main_Menu, InGame, NoMenu)
+   -Main Menus
+-updates settings manager
+-inGame menus
+-updates settings manager
+
+*SettingsManager
+   -Audio :: <<Sound Manager>>
+-sound level settings
+-sound type (headphones, speakers, 3.1, wouldn't worry about this)
+   -Visual :: <<Visual manager>> (tho most function calls are already in Unity's API)
+-Quality settings
+-Resolution
+-brightness
+-aspect ratio (wouldn't worry about this)
+   -Controls :: <<Input manager>>
+-Control Mapping
+-invert axis Y
+-invert axis X
+-controller sensitivity
+   -(Network)
+
+*SoundManager
+   -handles matching sounds/ loading from resources (If needed)
+   -handles sound levels; sounds/sound scripts find this @ startup & either an event list is populated, or the sounds actively check every second to see about levels
+
+
+*InputManager
+   -structs/functions for seeting up inputs
+   -input mapping
+   -axis naming
+   -deadzone + joystiq tweaks
+
+
+*CharacterManager
+   -might poll game state (if paused/ if in menu, then update child scripts), higher functions..
+   -ref :: interaction
+   -ref :: char controller
+   -ref :: camera controller
+   -ref :: input controller
+   -ref :: multiplayer scripts (another input type)
+
+-*InventoryManager
+-get/set to struct
+
+-*InteractionScript
+-shoots raycast/testing against objects tagged interactable
+
+        -*CameraManager
+               -sets state of camera
+               -holds functions to modify behavior
+
